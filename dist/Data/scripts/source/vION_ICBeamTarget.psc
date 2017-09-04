@@ -60,6 +60,13 @@ Event OnLoad()
 	iCount = 0
 	Wait(0.1)
 	While iCount < 9
+		TrackingBeamTargets[iCount].placeCaster()
+		iCount += 1
+	EndWhile
+
+	iCount = 0
+	Wait(0.1)
+	While iCount < 9
 		TrackingBeamTargets[iCount].startFiring()
 		iCount += 1
 	EndWhile

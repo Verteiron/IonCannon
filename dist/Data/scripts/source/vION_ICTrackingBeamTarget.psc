@@ -37,7 +37,7 @@ Bool 		Property isLockedOn = False			Auto
 
 Int 		Property indexNumber 				Auto
 
-Float 		Property wanderRadius = 800.0		Auto
+Float 		Property wanderRadius = 600.0		Auto
 
 Float 		Property casterHeight = 2000.0		Auto
 
@@ -53,6 +53,8 @@ Float pCastX
 Float pCastY
 Float pCastZ
 
+Float fDistance
+
 ;=== Events ===--
 
 Event OnLoad()
@@ -62,11 +64,7 @@ Event OnLoad()
 EndEvent
 
 Event OnUpdate()
-	If wanderRadius > 30
-		wanderRadius /= Randomfloat(1.3,1.6)
-		DebugTrace("wanderRadius is now " + wanderRadius)
-	Else
-		DebugTrace("wanderRadius is <= 30, shutting down...")
+	If fDistance < 50
 		GoToState("StopMoving")
 	EndIf
 	randomMove()
@@ -78,9 +76,10 @@ Event OnTranslationAlmostComplete()
 	OnUpdate()
 EndEvent
 
-Function startFiring()
-{Start updates}
-	DebugTrace("startFiring!")
+
+Function placeCaster()
+{Place caster some random distance away}
+
 
 	;Get my position, which should be the final target of the tracking beam
 	pX = GetPositionX()
@@ -99,25 +98,39 @@ Function startFiring()
 	kCaster.parentTarget = Self
 	kCaster.MoveTo(Self, 0, 0, casterHeight)
 	kCaster.Enable(0)
+EndFunction
+
+Function UpdateCasterDistance()
+	pCastX = kCaster.GetPositionX()
+	pCastY = kCaster.GetPositionY()
+	fDistance = Math.SqRt(((pCastX - pX) * (pCastX - pX)) + ((pCastY - pY) * (pCastY - pY)))
+	DebugTrace("Caster distance is " + fDistance)
+EndFunction
+
+Function startFiring()
+{Start updates}
+	DebugTrace("startFiring!")
 
 	;Start casting
 	DebugTrace("Casting!")
 	isCasting = true
 	vION_ICTrackerBeam1Spell.RemoteCast(kCaster,PlayerRef,Self)
-
+	UpdateCasterDistance()
 	RegisterForSingleUpdate(0.5 + RandomFloat(0,2))
 	SetPosition(pX, pY, pZ)
 EndFunction
 
 Function randomMove()
-	pCastX = pX + RandomFloat(-wanderRadius,wanderRadius)
-	pCastY = pY + RandomFloat(-wanderRadius,wanderRadius)
+	UpdateCasterDistance()
+	DebugTrace("Distance to target is " + fDistance)
+	pCastX = pX + RandomFloat(-fDistance,fDistance)
+	pCastY = pY + RandomFloat(-fDistance,fDistance)
 	;DebugTrace("Translating to " + pCastX + "," + pCastY)
-	Float fSpeed = wanderRadius / 1.5
-	If fSpeed < 100
-		fSpeed = 100
+	Float fSpeed = fDistance ; / 1.5
+	If fSpeed < 125
+		fSpeed = 125
 	EndIf
-	kCaster.SplineTranslateTo(pCastX, pCastY, kCaster.GetPositionZ(), 0, 0, RandomFloat(0,359), fSpeed, fSpeed)
+	kCaster.SplineTranslateTo(pCastX, pCastY, pZ + casterHeight, 0, 0, RandomFloat(0,359), RandomFloat(-1,1) * fSpeed / 2, fSpeed)
 EndFunction
 
 Function doShutDown()
@@ -143,8 +156,12 @@ State StopMoving
 	EndEvent
 
 	Event OnUpdate()
-		kCaster.TranslateTo(pX, pY, pZ + casterHeight, 0, 0, 0, 250)
-		isLockedOn = True
+		UpdateCasterDistance()
+		If fDistance > 5
+			kCaster.TranslateTo(pX, pY, pZ + casterHeight, 0, 0, 0, 125)
+		Else
+			isLockedOn = True
+		EndIf
 	EndEvent
 
 	Event OnLoad()
