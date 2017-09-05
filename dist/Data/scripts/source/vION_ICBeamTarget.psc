@@ -26,6 +26,21 @@ Activator 	Property vION_FXEmptyActivator			Auto
 Activator 	Property vION_ICTrackingBeamTargetActivator	Auto
 {Tracking beam caster activator}
 
+Activator 	Property vION_GlowActivator 			Auto
+{Bright glow effect}
+
+Form 		Property MGMagicFirePillarSmall 		Auto
+{Central beam attractor mesh}
+
+Spell 		Property vION_ICBeamBlastSpell 			Auto
+{Blast spell 1}
+
+Spell 		Property vION_ICFlingActorsSpell		Auto
+{Blast spell 2}
+
+Explosion 	Property fakeForceBall1024				Auto
+{Blast to push actors}
+
 ;=== Variables ===--
 
 vION_ICTrackingBeamTarget[] TrackingBeamTargets
@@ -33,6 +48,10 @@ vION_ICTrackingBeamTarget[] TrackingBeamTargets
 Float pX
 Float pY
 Float pZ
+
+
+ObjectReference kBeamSparks
+ObjectReference kGlow
 
 ;=== Events ===--
 
@@ -71,6 +90,11 @@ Event OnLoad()
 		iCount += 1
 	EndWhile
 	RegisterForSingleUpdate(1)
+	kBeamSparks = PlaceAtMe(MGMagicFirePillarSmall, abInitiallyDisabled = True)
+	kBeamSparks.MoveTo(kBeamSparks,0,0,256)
+	kBeamSparks.SetAngle(0,0,0)
+	kBeamSparks.SetScale(2)
+	kBeamSparks.EnableNoWait(True)
 EndEvent
 
 Event OnUpdate()
@@ -83,6 +107,7 @@ Event OnUpdate()
 		EndIf
 		iCount += 1
 	EndWhile
+	kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",(iLockCount as Float) / 9.0)
 	If (iLockCount == 9)
 		GoToState("LockedOn")
 	EndIf
@@ -115,7 +140,18 @@ State LockedOn
 			TrackingBeamTargets[iCount].doShutdown()
 			iCount += 1
 		EndWhile
-		Wait(3)
+		kGlow = PlaceAtMe(vION_GlowActivator,abInitiallyDisabled = True)
+		kGlow.SetScale(2)
+		Wait(1)
+		kGlow.EnableNoWait(True)
+		Wait(1)
+		vION_ICFlingActorsSpell.Cast(Self)
+		Wait(0.25)
+		vION_ICBeamBlastSpell.RemoteCast(Self,PlayerRef)
+		kGlow.DisableNoWait(True)
+		kBeamSparks.Disable(True)
+		kBeamSparks.Delete()
+		kGlow.Delete()
 		DebugTrace("Deleting myself! :(")
 		Delete()
 	EndEvent

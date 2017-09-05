@@ -37,7 +37,7 @@ Bool 		Property isLockedOn = False			Auto
 
 Int 		Property indexNumber 				Auto
 
-Float 		Property wanderRadius = 600.0		Auto
+Float 		Property wanderRadius = 400.0		Auto
 
 Float 		Property casterHeight = 2000.0		Auto
 
@@ -92,12 +92,13 @@ Function placeCaster()
 	pCastX = pX + (MultX * wanderRadius) + RandomFloat(-wanderRadius / 2, wanderRadius / 2)
 	pCastY = pY + (MultY * wanderRadius) + RandomFloat(-wanderRadius / 2, wanderRadius / 2)
 	SetPosition(pCastX, pCastY, pZ)
+	SetAngle(0,0,(360 / 9 * indexNumber))
 
 	;Place the caster
 	kCaster = PlaceAtMe(vION_ICTrackingBeamCasterActivator, abInitiallyDisabled = True) as vION_ICTrackingBeamCaster
 	kCaster.parentTarget = Self
 	kCaster.MoveTo(Self, 0, 0, casterHeight)
-	kCaster.Enable(0)
+	kCaster.EnableNoWait(True)
 EndFunction
 
 Function UpdateCasterDistance()
@@ -116,7 +117,7 @@ Function startFiring()
 	isCasting = true
 	vION_ICTrackerBeam1Spell.RemoteCast(kCaster,PlayerRef,Self)
 	UpdateCasterDistance()
-	RegisterForSingleUpdate(0.5 + RandomFloat(0,2))
+	RegisterForSingleUpdate(0.1)
 	SetPosition(pX, pY, pZ)
 EndFunction
 
@@ -130,7 +131,7 @@ Function randomMove()
 	If fSpeed < 125
 		fSpeed = 125
 	EndIf
-	kCaster.SplineTranslateTo(pCastX, pCastY, pZ + casterHeight, 0, 0, RandomFloat(0,359), RandomFloat(-1,1) * fSpeed / 2, fSpeed)
+	kCaster.SplineTranslateTo(pCastX, pCastY, pZ + casterHeight, 0, 0, (360 / 9 * indexNumber) - 90, RandomFloat(-1,1) * fSpeed / 2, fSpeed)
 EndFunction
 
 Function doShutDown()
@@ -158,7 +159,7 @@ State StopMoving
 	Event OnUpdate()
 		UpdateCasterDistance()
 		If fDistance > 5
-			kCaster.TranslateTo(pX, pY, pZ + casterHeight, 0, 0, 0, 125)
+			kCaster.TranslateTo(pX, pY, pZ + casterHeight, 0, 0, (360 / 9 * indexNumber) - 90, 125)
 		Else
 			isLockedOn = True
 		EndIf
