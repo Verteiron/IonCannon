@@ -64,7 +64,7 @@ Event OnLoad()
 EndEvent
 
 Event OnUpdate()
-	If fDistance < 50
+	If fDistance < 150
 		GoToState("StopMoving")
 	EndIf
 	randomMove()

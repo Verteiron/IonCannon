@@ -26,6 +26,15 @@ Activator 	Property vION_FXEmptyActivator			Auto
 Activator 	Property vION_ICTrackingBeamTargetActivator	Auto
 {Tracking beam caster activator}
 
+Activator 	Property vION_ICBeamRingActivator		Auto
+{SFX}
+
+Activator 	Property vION_ICBeamCoreActivator		Auto
+{SFX}
+
+Explosion 	Property vION_RingBlastExplosion		Auto
+{SFX}
+
 Activator 	Property vION_GlowActivator 			Auto
 {Bright glow effect}
 
@@ -37,6 +46,9 @@ Spell 		Property vION_ICBeamBlastSpell 			Auto
 
 Spell 		Property vION_ICFlingActorsSpell		Auto
 {Blast spell 2}
+
+Sound 		Property vION_BlastSM					Auto
+{Ion cannon blast sound}
 
 Explosion 	Property fakeForceBall1024				Auto
 {Blast to push actors}
@@ -50,8 +62,12 @@ Float pY
 Float pZ
 
 
+ObjectReference kSoundObj
+
 ObjectReference kBeamSparks
 ObjectReference kGlow
+
+ObjectReference[] kBlastRings
 
 ;=== Events ===--
 
@@ -62,6 +78,7 @@ Event OnLoad()
 	pY = GetPositionY()
 	pZ = GetPositionZ()
 	GoToState("Placed")
+	SetAngle(0,0,GetAngleZ())
 	TrackingBeamTargets	= New vION_ICTrackingBeamTarget[9]
 	Int iCount = 0
 	While iCount < 9
@@ -95,6 +112,22 @@ Event OnLoad()
 	kBeamSparks.SetAngle(0,0,0)
 	kBeamSparks.SetScale(2)
 	kBeamSparks.EnableNoWait(True)
+
+	kSoundObj = PlaceAtMe(vION_FXEmptyActivator)
+	kBlastRings = New ObjectReference[64]
+	Int i = 0
+	While(i < kBlastRings.Length)
+		kBlastRings[i] = PlaceAtMe(vION_ICBeamRingActivator,abInitiallyDisabled = True)
+		kBlastRings[i].MoveTo(Self,0,0,i * 500 + (RandomFloat(-200,200)))
+		If RandomInt(0,4) <= 1
+			kBlastRings[i].Delete()
+			kBlastRings[i] = None
+		Else
+			kBlastRings[i].SetScale(RandomFloat(0.85,1.0))
+			kBlastRings[i].SetAngle(RandomInt(-5,5),RandomInt(-5,5),RandomInt(0,359))
+		EndIf 
+		i += 1
+	EndWhile
 EndEvent
 
 Event OnUpdate()
@@ -142,9 +175,27 @@ State LockedOn
 		EndWhile
 		kGlow = PlaceAtMe(vION_GlowActivator,abInitiallyDisabled = True)
 		kGlow.SetScale(2)
+		
+
+		vION_BlastSM.Play(kSoundObj)
 		Wait(1)
 		kGlow.EnableNoWait(True)
-		Wait(1)
+
+		ObjectReference kBeamCore = PlaceAtMe(vION_ICBeamCoreActivator,abInitiallyDisabled = True)
+		kBeamCore.MoveTo(Self,0,0,10000)
+		kBeamCore.EnableNoWait()
+		While !kBeamCore.Is3dLoaded()
+			Wait(0.1)
+		EndWhile
+		kBeamCore.TranslateTo(pX,pY,pZ - 25000,0,0,359,15000)
+		iCount = kBlastRings.Length
+		While(iCount)
+			iCount -= 1
+			If kBlastRings[iCount]
+				kBlastRings[iCount].EnableNoWait(False)
+			EndIf
+		EndWhile
+		Wait(0.5)
 		vION_ICFlingActorsSpell.Cast(Self)
 		Wait(0.25)
 		vION_ICBeamBlastSpell.RemoteCast(Self,PlayerRef)
@@ -152,6 +203,12 @@ State LockedOn
 		kBeamSparks.Disable(True)
 		kBeamSparks.Delete()
 		kGlow.Delete()
+		Wait(5)
+		kBeamCore.StopTranslation()
+		kBeamCore.Delete()
+		;Wait a bit longer to avoid cutting off the soundfx
+		Wait(3)
+		kSoundObj.Delete()
 		DebugTrace("Deleting myself! :(")
 		Delete()
 	EndEvent
