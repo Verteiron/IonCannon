@@ -53,6 +53,9 @@ Sound 		Property vION_BlastSM					Auto
 Explosion 	Property fakeForceBall1024				Auto
 {Blast to push actors}
 
+Explosion 	Property vION_AfterglowSparksExplosion	Auto
+{Lingering sparkles}
+
 ;=== Variables ===--
 
 vION_ICTrackingBeamTarget[] TrackingBeamTargets
@@ -63,6 +66,7 @@ Float pZ
 
 
 ObjectReference kSoundObj
+ObjectReference kSparksObj
 
 ObjectReference kBeamSparks
 ObjectReference kGlow
@@ -114,6 +118,12 @@ Event OnLoad()
 	kBeamSparks.EnableNoWait(True)
 
 	kSoundObj = PlaceAtMe(vION_FXEmptyActivator)
+	
+	kSparksObj = PlaceAtMe(vION_FXEmptyActivator)
+	kSparksObj.MoveTo(Self,0,0,-8)
+	kSparksObj.SetAngle(0,0,RandomInt(0,359))
+	;kSparksObj.SetScale(4)
+
 	kBlastRings = New ObjectReference[64]
 	Int i = 0
 	While(i < kBlastRings.Length)
@@ -176,7 +186,6 @@ State LockedOn
 		kGlow = PlaceAtMe(vION_GlowActivator,abInitiallyDisabled = True)
 		kGlow.SetScale(2)
 		
-
 		vION_BlastSM.Play(kSoundObj)
 		Wait(1)
 		kGlow.EnableNoWait(True)
@@ -199,16 +208,20 @@ State LockedOn
 		vION_ICFlingActorsSpell.Cast(Self)
 		Wait(0.25)
 		vION_ICBeamBlastSpell.RemoteCast(Self,PlayerRef)
-		kGlow.DisableNoWait(True)
+		kGlow.SetScale(2)
+		kSparksObj.PlaceAtMe(vION_AfterglowSparksExplosion)
 		kBeamSparks.Disable(True)
 		kBeamSparks.Delete()
-		kGlow.Delete()
-		Wait(5)
+		Wait(2)
+		kGlow.DisableNoWait(True)
+		Wait(3)
 		kBeamCore.StopTranslation()
 		kBeamCore.Delete()
 		;Wait a bit longer to avoid cutting off the soundfx
 		Wait(3)
 		kSoundObj.Delete()
+		kSparksObj.Delete()
+		kGlow.Delete()
 		DebugTrace("Deleting myself! :(")
 		Delete()
 	EndEvent
