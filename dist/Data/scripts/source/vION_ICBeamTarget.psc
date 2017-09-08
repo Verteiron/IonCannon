@@ -112,9 +112,9 @@ Event OnLoad()
 	EndWhile
 	RegisterForSingleUpdate(1)
 	kBeamSparks = PlaceAtMe(vION_ICRisingSparks1Activator, abInitiallyDisabled = True)
-	kBeamSparks.MoveTo(kBeamSparks,0,0,256)
+	kBeamSparks.MoveTo(kBeamSparks,0,0,128)
 	kBeamSparks.SetAngle(0,0,0)
-	kBeamSparks.SetScale(5)
+	kBeamSparks.SetScale(3)
 	kBeamSparks.EnableNoWait(True)
 
 	kSoundObj = PlaceAtMe(vION_FXEmptyActivator)
@@ -210,13 +210,17 @@ State LockedOn
 		vION_ICBeamBlastSpell.RemoteCast(Self,PlayerRef)
 		kGlow.SetScale(2)
 		kSparksObj.PlaceAtMe(vION_AfterglowSparksExplosion)
-		kBeamSparks.Disable(True)
-		kBeamSparks.Delete()
+
+		kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",0.0)
 		Wait(2)
 		kGlow.DisableNoWait(True)
 		Wait(3)
 		kBeamCore.StopTranslation()
 		kBeamCore.Delete()
+
+		kBeamSparks.Disable(True)
+		kBeamSparks.Delete()
+
 		;Wait a bit longer to avoid cutting off the soundfx
 		Wait(3)
 		kSoundObj.Delete()
