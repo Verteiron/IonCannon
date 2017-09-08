@@ -114,7 +114,7 @@ Event OnLoad()
 	kBeamSparks = PlaceAtMe(vION_ICRisingSparks1Activator, abInitiallyDisabled = True)
 	kBeamSparks.MoveTo(kBeamSparks,0,0,256)
 	kBeamSparks.SetAngle(0,0,0)
-	kBeamSparks.SetScale(2)
+	kBeamSparks.SetScale(5)
 	kBeamSparks.EnableNoWait(True)
 
 	kSoundObj = PlaceAtMe(vION_FXEmptyActivator)
