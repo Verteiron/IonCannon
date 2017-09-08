@@ -38,8 +38,8 @@ Explosion 	Property vION_RingBlastExplosion		Auto
 Activator 	Property vION_GlowActivator 			Auto
 {Bright glow effect}
 
-Form 		Property MGMagicFirePillarSmall 		Auto
-{Central beam attractor mesh}
+Activator	Property vION_ICRisingSparks1Activator 	Auto
+{Central beam sparks mesh}
 
 Spell 		Property vION_ICBeamBlastSpell 			Auto
 {Blast spell 1}
@@ -111,7 +111,7 @@ Event OnLoad()
 		iCount += 1
 	EndWhile
 	RegisterForSingleUpdate(1)
-	kBeamSparks = PlaceAtMe(MGMagicFirePillarSmall, abInitiallyDisabled = True)
+	kBeamSparks = PlaceAtMe(vION_ICRisingSparks1Activator, abInitiallyDisabled = True)
 	kBeamSparks.MoveTo(kBeamSparks,0,0,256)
 	kBeamSparks.SetAngle(0,0,0)
 	kBeamSparks.SetScale(2)
