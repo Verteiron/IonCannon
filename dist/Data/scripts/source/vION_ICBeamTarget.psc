@@ -32,6 +32,12 @@ Activator 	Property vION_ICBeamRingActivator		Auto
 Activator 	Property vION_ICBeamCoreActivator		Auto
 {SFX}
 
+Activator 	Property vION_ICBeamFXActivator 		Auto
+{SFX}
+
+Activator 	Property vION_ICBeamLeaderActivator		Auto
+{SFX}
+
 Explosion 	Property vION_RingBlastExplosion		Auto
 {SFX}
 
@@ -73,6 +79,8 @@ ObjectReference kGlow
 
 ObjectReference[] kBlastRings
 
+ObjectReference kSparkZap
+
 ;=== Events ===--
 
 Event OnLoad()
@@ -84,6 +92,7 @@ Event OnLoad()
 	GoToState("Placed")
 	SetAngle(0,0,GetAngleZ())
 	TrackingBeamTargets	= New vION_ICTrackingBeamTarget[9]
+
 	Int iCount = 0
 	While iCount < 9
 		TrackingBeamTargets[iCount] = PlaceAtMe(vION_ICTrackingBeamTargetActivator, abInitiallyDisabled = True) as vION_ICTrackingBeamTarget
@@ -112,6 +121,7 @@ Event OnLoad()
 	EndWhile
 	RegisterForSingleUpdate(1)
 	kBeamSparks = PlaceAtMe(vION_ICRisingSparks1Activator, abInitiallyDisabled = True)
+
 	kBeamSparks.MoveTo(kBeamSparks,0,0,128)
 	kBeamSparks.SetAngle(0,0,0)
 	kBeamSparks.SetScale(3)
@@ -123,7 +133,9 @@ Event OnLoad()
 	kSparksObj.MoveTo(Self,0,0,-8)
 	kSparksObj.SetAngle(0,0,RandomInt(0,359))
 	;kSparksObj.SetScale(4)
-
+	
+	kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",0.1)
+	
 	kBlastRings = New ObjectReference[64]
 	Int i = 0
 	While(i < kBlastRings.Length)
@@ -186,10 +198,16 @@ State LockedOn
 		kGlow = PlaceAtMe(vION_GlowActivator,abInitiallyDisabled = True)
 		kGlow.SetScale(2)
 		
+		kSparkZap = PlaceAtMe(vION_ICBeamFXActivator,abInitiallyDisabled = True)
+		kSparkZap.SetAngle(-90,0,0)
+		kSparkZap.SetScale(6)
+
 		vION_BlastSM.Play(kSoundObj)
 		Wait(1)
 		kGlow.EnableNoWait(True)
 
+
+		kSparkZap.EnableNoWait(True)
 		ObjectReference kBeamCore = PlaceAtMe(vION_ICBeamCoreActivator,abInitiallyDisabled = True)
 		kBeamCore.MoveTo(Self,0,0,10000)
 		kBeamCore.EnableNoWait()
@@ -204,20 +222,24 @@ State LockedOn
 				kBlastRings[iCount].EnableNoWait(False)
 			EndIf
 		EndWhile
+		
 		Wait(0.5)
 		vION_ICFlingActorsSpell.Cast(Self)
 		Wait(0.25)
 		vION_ICBeamBlastSpell.RemoteCast(Self,PlayerRef)
 		kGlow.SetScale(2)
 		kSparksObj.PlaceAtMe(vION_AfterglowSparksExplosion)
-
+		kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",0.1)
+		Wait(0.25)
+		kSparkZap.DisableNoWait(True)
+		Wait(1.75)
+		kGlow.DisableNoWait(True)
+		Wait(1)
 		kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",0.0)
 		Wait(2)
-		kGlow.DisableNoWait(True)
-		Wait(3)
 		kBeamCore.StopTranslation()
 		kBeamCore.Delete()
-
+		kSparkZap.Delete()
 		kBeamSparks.Disable(True)
 		kBeamSparks.Delete()
 
