@@ -56,6 +56,9 @@ Spell 		Property vION_ICFlingActorsSpell		Auto
 Sound 		Property vION_BlastSM					Auto
 {Ion cannon blast sound}
 
+Explosion 	Property vION_SubBlastExplosion			Auto
+{Oval-shaped shockwave}
+
 Explosion 	Property fakeForceBall1024				Auto
 {Blast to push actors}
 
@@ -222,7 +225,7 @@ State LockedOn
 				kBlastRings[iCount].EnableNoWait(False)
 			EndIf
 		EndWhile
-		
+		PlaceAtMe(vION_SubBlastExplosion)		
 		Wait(0.5)
 		vION_ICFlingActorsSpell.Cast(Self)
 		Wait(0.25)
