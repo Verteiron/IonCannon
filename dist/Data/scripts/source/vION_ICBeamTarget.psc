@@ -248,6 +248,7 @@ State LockedOn
 
 		;Wait a bit longer to avoid cutting off the soundfx
 		Wait(3)
+		kSparksObj.Disable(True)
 		kSoundObj.Delete()
 		kSparksObj.Delete()
 		kGlow.Delete()
