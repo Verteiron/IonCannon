@@ -166,18 +166,15 @@ Event OnUpdate()
 
 	Int iLockCount = 0
 	Int iCount = 0
-	Int iSafetyCount = 0
-	While((iCount < 9) && (iSafetyCount < 60))
+	While(iCount < 9)
 		If (TrackingBeamTargets[iCount].isLockedOn)
 			iLockCount += 1
-			iSafetyCount += 1
 		EndIf
 		iCount += 1
 	EndWhile
 
-	DebugTrace("Safety count exceeded!",1)
 	kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",(iLockCount as Float) / 9.0)
-	If ((iLockCount == 9) || (iSafetyCount >= 60))
+	If (iLockCount >= 9) 
 		GoToState("LockedOn")
 	EndIf
 	
