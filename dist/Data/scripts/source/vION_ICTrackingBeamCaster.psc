@@ -27,3 +27,7 @@ Event OnTranslationAlmostComplete()
 	parentTarget.OnTranslationAlmostComplete()
 EndEvent
 
+Event OnCellDetach()
+	StopTranslation()
+	Delete()
+EndEvent

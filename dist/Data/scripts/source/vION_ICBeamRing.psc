@@ -25,6 +25,13 @@ Event OnLoad()
 	DebugTrace("Placed beamring!")
 EndEvent
 
+Event OnCellDetach()
+	UnregisterForUpdate()
+	GoToState("Shutdown")
+	StopTranslation()
+	Delete()
+EndEvent
+
 State Placed
 
 	Event OnBeginState()
@@ -40,6 +47,18 @@ State Placed
 	Event onLoad()
 		;Do nothing
 	EndEvent
+EndState
+
+State Shutdown
+
+	Event onLoad()
+		;Do nothing
+	EndEvent
+
+	Event OnUpdate()
+		;Do nothing
+	EndEvent
+
 EndState
 
 Function DebugTrace(String sDebugString, Int iSeverity = 0)

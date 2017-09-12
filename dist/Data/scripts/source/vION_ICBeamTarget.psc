@@ -84,6 +84,8 @@ ObjectReference[] kBlastRings
 
 ObjectReference kSparkZap
 
+ObjectReference kBeamCore
+
 ;=== Events ===--
 
 Event OnLoad()
@@ -93,7 +95,7 @@ Event OnLoad()
 	pY = GetPositionY()
 	pZ = GetPositionZ()
 	GoToState("Placed")
-	SetAngle(0,0,GetAngleZ())
+	SetAngle(0,0,RandomInt(0,359))
 	TrackingBeamTargets	= New vION_ICTrackingBeamTarget[9]
 
 	Int iCount = 0
@@ -155,18 +157,27 @@ Event OnLoad()
 	EndWhile
 EndEvent
 
+Event OnCellDetach()
+	UnregisterForUpdate()
+	GoToState("Shutdown")
+EndEvent
+
 Event OnUpdate()
 
 	Int iLockCount = 0
 	Int iCount = 0
-	While(iCount < 9)
+	Int iSafetyCount = 0
+	While((iCount < 9) && (iSafetyCount < 60))
 		If (TrackingBeamTargets[iCount].isLockedOn)
 			iLockCount += 1
+			iSafetyCount += 1
 		EndIf
 		iCount += 1
 	EndWhile
+
+	DebugTrace("Safety count exceeded!",1)
 	kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",(iLockCount as Float) / 9.0)
-	If (iLockCount == 9)
+	If ((iLockCount == 9) || (iSafetyCount >= 60))
 		GoToState("LockedOn")
 	EndIf
 	
@@ -211,7 +222,7 @@ State LockedOn
 
 
 		kSparkZap.EnableNoWait(True)
-		ObjectReference kBeamCore = PlaceAtMe(vION_ICBeamCoreActivator,abInitiallyDisabled = True)
+		kBeamCore = PlaceAtMe(vION_ICBeamCoreActivator,abInitiallyDisabled = True)
 		kBeamCore.MoveTo(Self,0,0,10000)
 		kBeamCore.EnableNoWait()
 		While !kBeamCore.Is3dLoaded()
@@ -249,6 +260,30 @@ State LockedOn
 		;Wait a bit longer to avoid cutting off the soundfx
 		Wait(3)
 		kSparksObj.Disable(True)
+		kSoundObj.Delete()
+		kSparksObj.Delete()
+		kGlow.Delete()
+		DebugTrace("Deleting myself! :(")
+		Delete()
+	EndEvent
+
+EndState
+
+State Shutdown
+
+	Event OnLoad()
+		;Do nothing
+	EndEvent
+
+	Event OnUpdate()
+		;Do nothing
+	EndEvent
+
+	Event OnBeginState()
+		kBeamCore.StopTranslation()
+		kBeamCore.Delete()
+		kSparkZap.Delete()
+		kBeamSparks.Delete()
 		kSoundObj.Delete()
 		kSparksObj.Delete()
 		kGlow.Delete()

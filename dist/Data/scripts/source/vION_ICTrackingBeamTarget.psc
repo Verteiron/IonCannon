@@ -76,6 +76,12 @@ Event OnTranslationAlmostComplete()
 	OnUpdate()
 EndEvent
 
+Event OnCellDetach()
+	GoToState("Shutdown")
+	UnregisterForUpdate()
+	OnTranslationAlmostComplete()
+	Delete()
+EndEvent
 
 Function placeCaster()
 {Place caster some random distance away}
