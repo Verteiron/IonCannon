@@ -200,7 +200,9 @@ State Shutdown
 	EndEvent
 
 	Event OnTranslationAlmostComplete()
-		kCaster.StopTranslation()
+		If kCaster.Is3dLoaded()
+			kCaster.StopTranslation()
+		EndIf
 		kCaster.InterruptCast()
 		DebugTrace("Deleting the caster! :(")
 		kCaster.Delete()

@@ -28,7 +28,7 @@ EndEvent
 Event OnCellDetach()
 	UnregisterForUpdate()
 	GoToState("Shutdown")
-	StopTranslation()
+	;StopTranslation()
 	Delete()
 EndEvent
 

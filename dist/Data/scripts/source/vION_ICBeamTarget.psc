@@ -65,6 +65,12 @@ Explosion 	Property fakeForceBall1024				Auto
 Explosion 	Property vION_AfterglowSparksExplosion	Auto
 {Lingering sparkles}
 
+Bool 		Property useTrackingBeams = True		Auto
+{Show tracking beams effect}
+
+Float 		Property wanderRadius = 300.0			Auto
+{How far the beams can wander before locking on}
+
 ;=== Variables ===--
 
 vION_ICTrackingBeamTarget[] TrackingBeamTargets
@@ -96,35 +102,43 @@ Event OnLoad()
 	pZ = GetPositionZ()
 	GoToState("Placed")
 	SetAngle(0,0,RandomInt(0,359))
-	TrackingBeamTargets	= New vION_ICTrackingBeamTarget[9]
 
 	Int iCount = 0
-	While iCount < 9
-		TrackingBeamTargets[iCount] = PlaceAtMe(vION_ICTrackingBeamTargetActivator, abInitiallyDisabled = True) as vION_ICTrackingBeamTarget
-		TrackingBeamTargets[iCount].indexNumber = iCount
-		TrackingBeamTargets[iCount].parentTarget = Self
-		Float MultX = Math.Cos((360.0 / 9) * iCount)
-		Float MultY = -Math.Sin((360.0 / 9) * iCount)
-		DebugTrace("Placing tracking beam " + iCount + " at x:" + (pX + (MultX * 100)) + ",y:" + (pY + (MultY * 100)) + "!")
-		TrackingBeamTargets[iCount].SetPosition(pX + (MultX * 100), pY + (MultY * 100), pZ)
-		TrackingBeamTargets[iCount].EnableNoWait()
-		iCount += 1
-	EndWhile
 
-	iCount = 0
-	Wait(0.1)
-	While iCount < 9
-		TrackingBeamTargets[iCount].placeCaster()
-		iCount += 1
-	EndWhile
+	If useTrackingBeams
+		
+		TrackingBeamTargets	= New vION_ICTrackingBeamTarget[9]
 
-	iCount = 0
-	Wait(0.1)
-	While iCount < 9
-		TrackingBeamTargets[iCount].startFiring()
-		iCount += 1
-	EndWhile
-	RegisterForSingleUpdate(1)
+		iCount = 0
+		While iCount < 9
+			TrackingBeamTargets[iCount] = PlaceAtMe(vION_ICTrackingBeamTargetActivator, abInitiallyDisabled = True) as vION_ICTrackingBeamTarget
+			TrackingBeamTargets[iCount].indexNumber = iCount
+			TrackingBeamTargets[iCount].parentTarget = Self
+			Float MultX = Math.Cos((360.0 / 9) * iCount)
+			Float MultY = -Math.Sin((360.0 / 9) * iCount)
+			DebugTrace("Placing tracking beam " + iCount + " at x:" + (pX + (MultX * 100)) + ",y:" + (pY + (MultY * 100)) + "!")
+			TrackingBeamTargets[iCount].SetPosition(pX + (MultX * 100), pY + (MultY * 100), pZ)
+			TrackingBeamTargets[iCount].wanderRadius = wanderRadius
+			TrackingBeamTargets[iCount].EnableNoWait()
+			iCount += 1
+		EndWhile
+
+		iCount = 0
+		Wait(0.1)
+		While iCount < 9
+			TrackingBeamTargets[iCount].placeCaster()
+			iCount += 1
+		EndWhile
+
+		iCount = 0
+		Wait(0.1)
+		While iCount < 9
+			TrackingBeamTargets[iCount].startFiring()
+			iCount += 1
+		EndWhile
+
+	EndIf
+
 	kBeamSparks = PlaceAtMe(vION_ICRisingSparks1Activator, abInitiallyDisabled = True)
 
 	kBeamSparks.MoveTo(kBeamSparks,0,0,128)
@@ -140,6 +154,8 @@ Event OnLoad()
 	;kSparksObj.SetScale(4)
 	
 	kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",0.1)
+
+	RegisterForSingleUpdate(0.5)
 	
 	kBlastRings = New ObjectReference[64]
 	Int i = 0
@@ -166,19 +182,25 @@ Event OnUpdate()
 
 	Int iLockCount = 0
 	Int iCount = 0
-	While(iCount < 9)
-		If (TrackingBeamTargets[iCount].isLockedOn)
-			iLockCount += 1
-		EndIf
-		iCount += 1
-	EndWhile
 
-	kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",(iLockCount as Float) / 9.0)
-	If (iLockCount >= 9) 
+	If useTrackingBeams
+		While(iCount < 9)
+			If (TrackingBeamTargets[iCount].isLockedOn)
+				iLockCount += 1
+			EndIf
+			iCount += 1
+		EndWhile
+
+		kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",(iLockCount as Float) / 9.0)
+		If (iLockCount >= 9) 
+			GoToState("LockedOn")
+		EndIf
+	Else
+		kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",1.0)
 		GoToState("LockedOn")
 	EndIf
 	
-	RegisterForSingleUpdate(0.5)
+	RegisterForSingleUpdate(0.25)
 
 EndEvent
 
@@ -202,10 +224,14 @@ State LockedOn
 
 	Event OnBeginState()
 		Int iCount = 0
-		While(iCount < 9)
-			TrackingBeamTargets[iCount].doShutdown()
-			iCount += 1
-		EndWhile
+		
+		If useTrackingBeams
+			While(iCount < 9)
+				TrackingBeamTargets[iCount].doShutdown()
+				iCount += 1
+			EndWhile
+		EndIf
+
 		kGlow = PlaceAtMe(vION_GlowActivator,abInitiallyDisabled = True)
 		kGlow.SetScale(2)
 		

@@ -15,7 +15,7 @@ Actor 			Property PlayerREF						Auto
 Float 			Property AreaOfEffect 					Auto
 Int 			Property PushForce 						Auto
 
-Activator 		Property vION_ICBeamTargetActivator		Auto
+FormList 		Property vION_ICTargetList				Auto
 
 ObjectReference Property PushSource						Auto
 
@@ -29,7 +29,7 @@ Actor 			kCaster
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	kTarget = akTarget
 	kCaster = akCaster
-	PushSource = FindClosestReferenceOfTypeFromRef(vION_ICBeamTargetActivator,akTarget,AreaOfEffect * 21.333333)
+	PushSource = FindClosestReferenceOfAnyTypeInListFromRef(vION_ICTargetList,akTarget,AreaOfEffect * 21.333333)
 	Debug.Trace(self + ": kTarget is " + kTarget + ", kCaster is " + kCaster + ", PushSource is " + PushSource + ".")
 	If kTarget == PlayerREF
 		Return
