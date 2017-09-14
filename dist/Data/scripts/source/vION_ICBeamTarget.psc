@@ -157,16 +157,16 @@ Event OnLoad()
 
 	RegisterForSingleUpdate(0.5)
 	
-	kBlastRings = New ObjectReference[64]
+	kBlastRings = New ObjectReference[16]
 	Int i = 0
 	While(i < kBlastRings.Length)
 		kBlastRings[i] = PlaceAtMe(vION_ICBeamRingActivator,abInitiallyDisabled = True)
-		kBlastRings[i].MoveTo(Self,0,0,i * 500 + (RandomFloat(-200,200)))
 		If RandomInt(0,4) <= 1
 			kBlastRings[i].Delete()
 			kBlastRings[i] = None
 		Else
-			kBlastRings[i].SetScale(RandomFloat(0.85,1.0))
+			kBlastRings[i].MoveTo(Self,0,0,i * 500 + (RandomFloat(-200,200)))
+			kBlastRings[i].SetScale(RandomFloat(0.85,1.25))
 			kBlastRings[i].SetAngle(RandomInt(-5,5),RandomInt(-5,5),RandomInt(0,359))
 		EndIf 
 		i += 1
