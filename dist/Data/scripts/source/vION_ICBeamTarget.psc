@@ -155,8 +155,10 @@ Event OnLoad()
 	
 	kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",0.1)
 
-	RegisterForSingleUpdate(0.5)
-	
+	If !useTrackingBeams
+		kBeamSparks.SetAnimationVariableFloat("fmagicburnamount",0.8)
+	EndIf
+
 	kBlastRings = New ObjectReference[16]
 	Int i = 0
 	While(i < kBlastRings.Length)
@@ -171,6 +173,7 @@ Event OnLoad()
 		EndIf 
 		i += 1
 	EndWhile
+	RegisterForSingleUpdate(0.1)
 EndEvent
 
 Event OnCellDetach()
@@ -240,9 +243,8 @@ State LockedOn
 		kSparkZap.SetScale(6)
 
 		vION_BlastSM.Play(kSoundObj)
-		Wait(1)
 		kGlow.EnableNoWait(True)
-
+		Wait(1)
 
 		kSparkZap.EnableNoWait(True)
 		kBeamCore = PlaceAtMe(vION_ICBeamCoreActivator,abInitiallyDisabled = True)
