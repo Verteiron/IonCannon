@@ -305,6 +305,16 @@ State Shutdown
 	EndEvent
 
 	Event OnBeginState()
+		Int iCount = 0
+		If useTrackingBeams
+			While(iCount < 9)
+				If TrackingBeamTargets[iCount]
+					TrackingBeamTargets[iCount].Delete()
+				EndIf
+				TrackingBeamTargets[iCount] = None
+				iCount += 1
+			EndWhile
+		EndIf
 		kBeamCore.StopTranslation()
 		kBeamCore.Delete()
 		kSparkZap.Delete()

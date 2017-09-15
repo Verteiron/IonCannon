@@ -56,9 +56,9 @@ ObjectReference _greenLight
 Event OnLoad()
 	GoToState("Loaded")
 	If (vION_ICTargetPlaced.GetValue())
-		DebugTrace("Already placed, aborting :(")
-		GoToState("Shutdown")
-		Return
+		;DebugTrace("Already placed, aborting :(")
+		;GoToState("Shutdown")
+		;Return
 	EndIf
 	vION_ICTargetPlaced.Mod(1)
 	Int i = 0
@@ -96,8 +96,12 @@ Function GoSplodey()
 	_redLight.Delete()
 	PlaceAtMe(vION_ICBeamTargetActivator)
 	RegisterForSingleUpdate(5)
-	SetScale(0.1)
+	MoveToMyEditorLocation()
 EndFunction
+
+Event OnCellDetach()
+	GoToState("Shutdown")
+EndEvent
 
 Event OnUpdate()
 	Int i = 0
@@ -151,7 +155,8 @@ State Shutdown
 	EndEvent
 
 	Event OnUpdate()
-		Delete()
+		MoveToMyEditorLocation()
+		GoToState("")
 	EndEvent
 
 EndState
