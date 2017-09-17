@@ -206,6 +206,7 @@ State Shutdown
 		kCaster.InterruptCast()
 		DebugTrace("Deleting the caster! :(")
 		kCaster.Delete()
+		parentTarget = None
 		DebugTrace("Deleting myself! :(")
 		Delete()
 	EndEvent

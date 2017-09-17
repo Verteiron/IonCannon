@@ -288,6 +288,14 @@ State LockedOn
 		kSoundObj.Delete()
 		kSparksObj.Delete()
 		kGlow.Delete()
+		iCount = kBlastRings.Length
+		While(iCount)
+			iCount -= 1
+			If kBlastRings[iCount]
+				kBlastRings[iCount].Delete()
+			EndIf
+			kBlastRings[iCount] = None
+		EndWhile
 		DebugTrace("Deleting myself! :(")
 		Delete()
 	EndEvent
@@ -315,6 +323,14 @@ State Shutdown
 				iCount += 1
 			EndWhile
 		EndIf
+		iCount = kBlastRings.Length
+		While(iCount)
+			iCount -= 1
+			If kBlastRings[iCount]
+				kBlastRings[iCount].Delete()
+			EndIf
+			kBlastRings[iCount] = None
+		EndWhile
 		kBeamCore.StopTranslation()
 		kBeamCore.Delete()
 		kSparkZap.Delete()

@@ -28,6 +28,7 @@ Event OnTranslationAlmostComplete()
 EndEvent
 
 Event OnCellDetach()
+	parentTarget = None
 	StopTranslation()
 	Delete()
 EndEvent
