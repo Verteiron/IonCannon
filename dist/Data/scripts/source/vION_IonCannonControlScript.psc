@@ -23,6 +23,7 @@ ReferenceAlias 		Property alias_RemoteTargetFrame 	Auto
 ReferenceAlias 		Property alias_RemoteCoreWaiting 	Auto
 ReferenceAlias 		Property alias_RemoteCoreActivated 	Auto
 
+Spell 				Property vION_ICTrackerBeam1Spell	Auto
 
 ObjectReference 	Property BeamCore 					Auto Hidden
 ObjectReference 	Property BeamFX 					Auto Hidden
@@ -34,6 +35,13 @@ ObjectReference 	Property RemoteCoreActivated 		Auto Hidden
 ObjectReference[] 	Property TrackerBeamTargets 		Auto Hidden
 ObjectReference[] 	Property TrackerBeamCasters 		Auto Hidden
 ObjectReference[] 	Property BeamRings 					Auto Hidden
+
+ObjectReference 	Property Target						Auto Hidden
+
+Float 				Property tX							Auto Hidden
+Float 				Property tY							Auto Hidden
+Float 				Property tZ							Auto Hidden
+Float 				Property tHeading					Auto Hidden
 
 
 ;=== Config variables ===--
@@ -102,6 +110,62 @@ Function AssignRefs()
 	EndWhile
 EndFunction
 
+Function SetTarget(ObjectReference kTarget)
+{Set the current target property and prep some information about it.}
+	Target = kTarget
+	tX = Target.GetPositionX()
+	tY = Target.GetPositionY()
+	tZ = Target.GetPositionZ()
+	tHeading = Target.GetAngleZ()
+	DebugTrace("Target is now " + Target + ". Position x:" + tX +", y:" + tY + ", z:" + tZ + ", Heading:" + tHeading)
+EndFunction
+
+Function ScanForTarget(Float fMaxRange)
+{Spawn the tracking beams and begin scanning for the target.}
+	Int iCount = 0
+	While iCount < 9
+		TrackerBeamCasters[iCount].DisableNoWait()
+		TrackerBeamCasters[iCount].MoveTo(Target)
+
+		Float MultX = Math.Cos((360.0 / 9) * iCount)
+		Float MultY = -Math.Sin((360.0 / 9) * iCount)
+		
+		DebugTrace("Placing tracking beam caster " + iCount + " at x:" + (tX + (MultX * fMaxRange)) + ",y:" + (tY + (MultY * fMaxRange)) + "!")
+		TrackerBeamCasters[iCount].MoveTo(Target,(MultX * fMaxRange) + RandomFloat(-fMaxRange/2,fMaxRange/2), (MultY * fMaxRange) + RandomFloat(-fMaxRange/2,fMaxRange/2), 2000)
+		TrackerBeamTargets[iCount].MoveTo(TrackerBeamCasters[iCount],0,0,-2000)
+		iCount += 1
+	EndWhile
+
+	iCount = 0
+	While iCount < 9
+		TrackerBeamCasters[iCount].EnableNoWait(True)
+		iCount += 1
+	EndWhile
+
+	iCount = 0
+	Wait(0.1)
+	While iCount < 9
+		TrackerBeamCasters[iCount].EnableNoWait(True)
+		vION_ICTrackerBeam1Spell.RemoteCast(TrackerBeamCasters[iCount],PlayerRef,TrackerBeamTargets[iCount])
+		iCount += 1
+	EndWhile
+
+	iCount = 0
+	Wait(0.1)
+	While iCount < 9
+		TrackerBeamCasters[iCount].EnableNoWait(True)
+		iCount += 1
+	EndWhile
+EndFunction
+
+Event TrackerBeamCasterTranslationUpdate(ObjectReference kCaster)
+
+EndEvent
+
+Function LockOnTarget()
+{Stop the beams random movement and send them to the lock-on location.}
+	
+EndFunction
 
 Function DebugTrace(String sDebugString, Int iSeverity = 0)
 	Debug.Trace("vION/ICControl: " + sDebugString,iSeverity)

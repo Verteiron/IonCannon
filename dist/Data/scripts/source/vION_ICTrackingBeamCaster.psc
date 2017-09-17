@@ -19,16 +19,17 @@ Import Game
 ObjectReference 	Property parentTarget		Auto
 {The target that spawned me}
 
+vION_IonCannonControlScript Property IonCannonControl Auto
+{Master Ion Cannon control}
+
 ;=== Variables ===--
 
 ;=== Events ===--
 
 Event OnTranslationAlmostComplete()
-	parentTarget.OnTranslationAlmostComplete()
+	IonCannonControl.TrackerBeamCasterTranslationUpdate(Self)
 EndEvent
 
-Event OnCellDetach()
-	parentTarget = None
-	StopTranslation()
-	Delete()
-EndEvent
+Function StartScanning()
+	
+EndFunction
