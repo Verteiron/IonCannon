@@ -138,12 +138,13 @@ Function PlaceBeamRings()
 		;BeamRings[i].Reset()
 		BeamRings[i].DisableNoWait(False)
 		;If RandomInt(0,4) > 1
-			BeamRings[i].MoveTo(Target,0,0,i * 500 + (RandomFloat(-200,200)))
-			BeamRings[i].SetScale(RandomFloat(0.85,1.25))
+			BeamRings[i].MoveTo(Target,0,0,i * 500 + (RandomFloat(-150,150)))
+			BeamRings[i].SetScale(2.0 - (i * 0.125))
 			BeamRings[i].SetAngle(RandomInt(-5,5),RandomInt(-5,5),RandomInt(0,359))
 		;EndIf 
 		i += 1
 	EndWhile
+	BeamRings[0].MoveTo(Target,0,0,100) ; make sure lowest ring can be seen
 	DebugTrace("Placed all beam rings!")
 EndFunction
 
@@ -326,11 +327,13 @@ Function FireBeam()
 	While(iCount)
 		iCount -= 1
 		If BeamRings[iCount]
-			;BeamRings[iCount].EnableNoWait()
-			BeamRings[iCount].PlaceAtMe(vION_RingBlastExplosion1)
+			BeamRings[iCount].EnableNoWait()
+			Wait(0.01)
+			BeamRings[iCount].PlayGamebryoAnimation("SpecialIdle_AreaEffect")
+			;BeamRings[iCount].PlaceAtMe(vION_RingBlastExplosion1)
 		EndIf
 	EndWhile
-	Wait(0.25)
+	;Wait(0.25)
 	Target.PlaceAtMe(vION_SubBlastExplosion)
 	Wait(0.25)
 	vION_ICFlingActorsSpell.Cast(Target)
