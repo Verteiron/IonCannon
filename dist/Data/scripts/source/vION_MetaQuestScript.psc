@@ -67,15 +67,6 @@ Event OnGameReload()
 	;EndIf
 EndEvent
 
-Event OnUpkeepState(string eventName, string strArg, float numArg, Form sender)
-	If eventName == "vFFC_UpkeepBegin"
-		_iUpkeepsExpected += 1
-	ElseIf eventName == "vFFC_UpkeepEnd"
-		_iUpkeepsCompleted += 1
-		;DebugTrace("Metaquest Upkeep finished for " + sender + ". (" + _iUpkeepsCompleted + "/" + _iUpkeepsExpected + ")")
-	EndIf
-EndEvent
-
 Event OnShutdown(string eventName, string strArg, float numArg, Form sender)
 	DebugTrace("OnShutdown!")
 	Wait(0.1)
@@ -91,7 +82,7 @@ Function DoUpkeep(Bool DelayedStart = True)
 	;FIXME: CHANGE THIS WHEN UPDATING!
 	ModVersionMajor = 0
 	ModVersionMinor = 0
-	ModVersionPatch = 2
+	ModVersionPatch = 3
 	If !CheckDependencies()
 		AbortStartup()
 		Return
@@ -152,7 +143,14 @@ Function DoUpgrade()
 	;Generic upgrade code
 	If ModVersion < _iCurrentVersion
 		DebugTrace("Upgrading to " + GetVersionString(_iCurrentVersion) + "...")
-		;FIXME: Do upgrade stuff!
+		DebugTrace("Restarting Ion Cannon Control...")
+		vION_IonCannonControl.Stop()
+		WaitMenuMode(0.25)
+		Bool bResult = vION_IonCannonControl.Start()
+		WaitMenuMode(0.1)
+		If !bResult
+			DebugTrace("DoInit: Ion Cannon Control script did not start properly, WTF?")
+		EndIf
 		ModVersion = _iCurrentVersion
 		DebugTrace("Upgrade to " + GetVersionString(_iCurrentVersion) + " complete!")
 	EndIf

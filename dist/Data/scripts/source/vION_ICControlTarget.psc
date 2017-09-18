@@ -22,9 +22,47 @@ Actor 		Property PlayerRef						Auto
 vION_IonCannonControlScript Property IonCannonControl Auto
 {Master Ion Cannon control}
 
+Float 		Property ScanDelaySecs = 1.0			Auto
+{How long before lock-on - 0 to fire immediately}
+Float 		Property ScanBeamRadius = 400.0			Auto
+{How far the beams wander during scan phase}
+
 ;=== Variables ===--
 
 ;=== Events ===--
+
+Event OnLoad()
+{Tell Ion Cannon Control there's a new target in town!}
+	GotoState("Loaded")
+	SetAngle(0,0,GetAngleZ())
+	DebugTrace("Placed!")
+	If IonCannonControl.Busy
+		Debug.Notification("Ion Cannon is busy " + IonCannonControl.Status + "!")
+		RegisterForSingleUpdate(1)
+		Return
+	EndIf
+	Int iSafety = 10
+	While !Is3dLoaded() && iSafety
+		iSafety -= 1
+		Wait(0.1)
+	EndWhile
+	IonCannonControl.SetTarget(Self)
+	;IonCannonControl.ScanForTarget(400)
+	;Wait(1)
+	;IonCannonControl.LockOnTarget()
+	IonCannonControl.Firebeam()
+	RegisterForSingleUpdate(10)
+EndEvent
+
+Event OnUpdate()
+	Delete()
+EndEvent
+
+State Loaded
+	Event OnLoad()
+		;Do nothing
+	EndEvent
+EndState
 
 Function DebugTrace(String sDebugString, Int iSeverity = 0)
 	Debug.Trace("vION/ICControlTarget: " + sDebugString,iSeverity)
