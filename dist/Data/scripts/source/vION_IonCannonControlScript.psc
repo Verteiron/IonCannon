@@ -26,6 +26,7 @@ ReferenceAlias 		Property alias_RemoteCoreActivated 	Auto
 ReferenceAlias 		Property alias_SoundFX 				Auto
 
 Explosion 			Property vION_SubBlastExplosion 	Auto
+Explosion 			Property vION_RingBlastExplosion1 	Auto
 Explosion 			Property vION_AfterglowSparksExplosion 	Auto
 
 Spell 				Property vION_ICTrackerBeam1Spell	Auto
@@ -99,7 +100,8 @@ Function SetTarget(ObjectReference kTarget)
 	tHeading = Target.GetAngleZ()
 	DebugTrace("Target is now " + Target + ". Position x:" + tX +", y:" + tY + ", z:" + tZ + ", Heading:" + tHeading)
 
-	RegisterForSingleUpdate(0.1)
+	;RegisterForSingleUpdate(0)
+	PlaceBeamRings()
 	
 	RisingSparks.MoveTo(Target,0,0,192)
 	RisingSparks.SetAngle(0,0,tHeading)
@@ -133,12 +135,13 @@ Function PlaceBeamRings()
 {Place Beam rings in advance}
 	Int i = 0
 	While(i < BeamRings.Length)
-		BeamRings[i].DisableNoWait()
-		If RandomInt(0,4) > 1
+		;BeamRings[i].Reset()
+		BeamRings[i].DisableNoWait(False)
+		;If RandomInt(0,4) > 1
 			BeamRings[i].MoveTo(Target,0,0,i * 500 + (RandomFloat(-200,200)))
 			BeamRings[i].SetScale(RandomFloat(0.85,1.25))
 			BeamRings[i].SetAngle(RandomInt(-5,5),RandomInt(-5,5),RandomInt(0,359))
-		EndIf 
+		;EndIf 
 		i += 1
 	EndWhile
 	DebugTrace("Placed all beam rings!")
@@ -323,7 +326,8 @@ Function FireBeam()
 	While(iCount)
 		iCount -= 1
 		If BeamRings[iCount]
-			BeamRings[iCount].EnableNoWait(False)
+			;BeamRings[iCount].EnableNoWait()
+			BeamRings[iCount].PlaceAtMe(vION_RingBlastExplosion1)
 		EndIf
 	EndWhile
 	Wait(0.25)
