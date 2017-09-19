@@ -336,16 +336,7 @@ Function FireBeam()
 	TargetGlow.MoveTo(Target)
 	TargetGlow.EnableNoWait(True)
 	BeamLight.TranslateTo(tX,tY,tZ + 25,0,0,0,300)
-	
-	Int iCount = BeamRings.Length
-	While(iCount)
-		iCount -= 1
-		If BeamRings[iCount]
-			BeamRings[iCount].EnableNoWait()
-		EndIf
-	EndWhile
-	Wait(1.0)
-
+	Wait(1.2)
 	BeamFX.EnableNoWait(True)
 
 	BeamCore.MoveTo(Target,0,0,10000)
@@ -357,10 +348,12 @@ Function FireBeam()
 	EndWhile
 	BeamCore.TranslateTo(tX,tY,tZ - 25000,0,0,0,15000)
 	
-	iCount = BeamRings.Length
+	Int iCount = BeamRings.Length
 	While(iCount)
 		iCount -= 1
 		If BeamRings[iCount]
+			BeamRings[iCount].EnableNoWait()
+			Wait(0.01)
 			BeamRings[iCount].PlayGamebryoAnimation("SpecialIdle_AreaEffect")
 			;BeamRings[iCount].PlaceAtMe(vION_RingBlastExplosion1)
 		EndIf
@@ -405,10 +398,12 @@ EndFunction
 
 Function PlaceRemoteTarget(ObjectReference kTarget)
 	DebugTrace("Placing remote target!")
-	DummyTarget.MoveTo(kTarget)
 	RemoteTargetFrame.MoveTo(kTarget)
 	RemoteCoreWaiting.MoveTo(kTarget)
 	TargetRedLight.MoveTo(kTarget)
+
+	DummyTarget.MoveTo(kTarget)
+	DummyTarget.SetAngle(0,0,DummyTarget.GetAngleZ())
 
 	Int i = 0
 	While (i < 2)
