@@ -390,6 +390,16 @@ Function FireBeam()
 	ResetAll()
 EndFunction
 
+Function PlaceRemoteTarget(ObjectReference kTarget)
+	kTarget.PlaceAtMe(RemoteTargetFrame)
+	kTarget.PlaceAtMe(RemoteCoreWaiting)
+	kTarget.PlaceAtMe(TargetRedLight)
+
+
+EndFunction
+
+
+
 Function ResetAll()
 	ReadyToFire = False
 	Busy = True

@@ -3,8 +3,8 @@ Scriptname vION_ICBeamRemoteTarget extends ObjectReference
 
 ; === [ vION_ICBeamRemoteTarget.psc ] ==========================================---
 ; Handles:
-;   Placement of remote target SFX
-;   Placing the actual beam summoner
+;   Placement of remote target meshes
+;   Notifying IonCannonControl of what to do
 ; ========================================================---
 
 ;=== Imports ===--
@@ -15,6 +15,9 @@ Import Game
 ;=== Constants ===--
 
 ;=== Properties ===--
+
+vION_IonCannonControlScript Property IonCannonControl 		Auto
+{Master Ion Cannon control}
 
 Actor 			Property PlayerREF							Auto
 
