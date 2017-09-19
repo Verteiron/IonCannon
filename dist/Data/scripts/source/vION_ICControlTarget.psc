@@ -47,10 +47,10 @@ Event OnLoad()
 		Wait(0.1)
 	EndWhile
 	IonCannonControl.SetTarget(Self)
-	;IonCannonControl.ScanForTarget(400)
-	;Wait(1)
-	;IonCannonControl.LockOnTarget()
-	IonCannonControl.Firebeam()
+	IonCannonControl.ScanForTarget(400)
+	Wait(3)
+	IonCannonControl.LockOnTarget()
+	;IonCannonControl.Firebeam()
 	RegisterForSingleUpdate(10)
 EndEvent
 

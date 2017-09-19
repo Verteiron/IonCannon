@@ -25,6 +25,11 @@ ReferenceAlias 		Property alias_RemoteCoreActivated 	Auto
 
 ReferenceAlias 		Property alias_SoundFX 				Auto
 
+ReferenceAlias		Property alias_BeamLight			Auto
+ReferenceAlias		Property alias_TargetingLight		Auto
+ReferenceAlias		Property alias_TargetGreenLight		Auto
+ReferenceAlias		Property alias_TargetRedLight		Auto
+
 Explosion 			Property vION_SubBlastExplosion 	Auto
 Explosion 			Property vION_RingBlastExplosion1 	Auto
 Explosion 			Property vION_AfterglowSparksExplosion 	Auto
@@ -49,6 +54,11 @@ ObjectReference[] 	Property BeamRings 					Auto Hidden
 ObjectReference 	Property Target						Auto Hidden
 
 ObjectReference 	Property SoundFX					Auto Hidden
+
+ObjectReference		Property BeamLight 					Auto Hidden
+ObjectReference		Property TargetingLight 			Auto Hidden
+ObjectReference		Property TargetGreenLight 			Auto Hidden
+ObjectReference		Property TargetRedLight				Auto Hidden
 
 Float 				Property tX							Auto Hidden
 Float 				Property tY							Auto Hidden
@@ -207,7 +217,12 @@ Function ScanForTarget(Float fMaxRange)
 	; 	iCount += 1
 	; EndWhile
 
+	;TargetingLight.MoveTo(Target,0,0,2400)
+	;TargetingLight.SetAngle(0,-90,0)
+
+
 	Wait(0.25)
+	;TargetingLight.TranslateTo(tX,tY,tZ + 317,0,-90,0,200)
 	iCount = 0
 	While iCount < 9
 		TrackerBeamTargets[iCount].MoveTo(Target,MultX[iCount] * 100,MultY[iCount] * 100,100)
@@ -240,7 +255,7 @@ Function LockOnTarget()
 	Status = "Locking"
 
 	RegisterForSingleUpdateGameTime((1.0 / 60.0) * 15) ; Emergency bail-out if something locks up
-
+	;TargetingLight.TranslateTo(tX,tY,tZ + 317,0,-90,0,1000)
 	RisingSparks.SetAnimationVariableFloat("fmagicburnamount",0.7)
 	LockCount = 0
 	Int iCount = 0
@@ -263,6 +278,7 @@ Event TrackerBeamCasterLockedOn(vION_ICTrackingBeamCaster kCaster)
 		DebugTrace("Ready to fire!")
 		FireWhenReady = True
 		RegisterForSingleUpdate(0)
+		;TargetingLight.TranslateTo(tX,tY,tZ,0,-90,0,100)
 		Int iCount = 0
 		While iCount < 9
 			(TrackerBeamCasters[iCount] as vION_ICTrackingBeamCaster).ShutDown()
@@ -309,26 +325,36 @@ Function FireBeam()
 	BeamFX.MoveTo(Target)
 	BeamFX.SetAngle(-90,0,0)
 	BeamFX.SetScale(6)
+	BeamLight.MoveTo(Target,0,0,2200)
 
 	vION_BlastSM.Play(SoundFX)
 	TargetGlow.MoveTo(Target)
 	TargetGlow.EnableNoWait(True)
-	Wait(1.2)
-
-	BeamFX.EnableNoWait(True)
-
-	BeamCore.MoveTo(Target,0,0,10000)
-	BeamCore.EnableNoWait()
-	While !BeamCore.Is3dLoaded()
-		Wait(0.1)
-	EndWhile
-	BeamCore.TranslateTo(tX,tY,tZ - 25000,0,0,0,15000)
+	BeamLight.TranslateTo(tX,tY,tZ + 25,0,0,0,300)
+	
 	Int iCount = BeamRings.Length
 	While(iCount)
 		iCount -= 1
 		If BeamRings[iCount]
 			BeamRings[iCount].EnableNoWait()
-			Wait(0.01)
+		EndIf
+	EndWhile
+	Wait(1.0)
+
+	BeamFX.EnableNoWait(True)
+
+	BeamCore.MoveTo(Target,0,0,10000)
+	BeamCore.SetScale(4)
+	BeamCore.EnableNoWait()
+	While !BeamCore.Is3dLoaded()
+		Wait(0.1)
+	EndWhile
+	BeamCore.TranslateTo(tX,tY,tZ - 25000,0,0,0,15000)
+	
+	iCount = BeamRings.Length
+	While(iCount)
+		iCount -= 1
+		If BeamRings[iCount]
 			BeamRings[iCount].PlayGamebryoAnimation("SpecialIdle_AreaEffect")
 			;BeamRings[iCount].PlaceAtMe(vION_RingBlastExplosion1)
 		EndIf
@@ -340,15 +366,19 @@ Function FireBeam()
 	Wait(0.25)
 	vION_ICBeamBlastSpell.RemoteCast(Target,PlayerRef)
 	TargetGlow.SetScale(2)
+	BeamLight.TranslateTo(tX,tY,tZ - 2500,0,0,0,300)
 	Target.PlaceAtMe(vION_AfterglowSparksExplosion)
 	RisingSparks.SetAnimationVariableFloat("fmagicburnamount",0.1)
 	Wait(0.25)
 	BeamFX.DisableNoWait(True)
 	Wait(1.75)
+	BeamLight.TranslateTo(tX,tY,tZ - 2500,0,0,0,800)
 	TargetGlow.DisableNoWait(True)
 	Wait(1)
 	RisingSparks.SetAnimationVariableFloat("fmagicburnamount",0.0)
 	Wait(2)
+	BeamLight.StopTranslation()
+	BeamLight.MoveToMyEditorLocation()
 	BeamCore.StopTranslation()
 	BeamCore.MoveToMyEditorLocation()
 	BeamFX.MoveToMyEditorLocation()
@@ -379,6 +409,8 @@ Function ResetAll()
 	RemoteCoreWaiting.MoveToMyEditorLocation()
 	RemoteCoreActivated.MoveToMyEditorLocation()
 	SoundFX.MoveToMyEditorLocation()
+	BeamLight.MoveToMyEditorLocation()
+	;TargetingLight.MoveToMyEditorLocation()
 
 	Int iCount = 0
 	While iCount < TrackerBeamTargets.Length
@@ -450,6 +482,11 @@ Function AssignRefs()
 	RemoteCoreWaiting = alias_RemoteCoreWaiting.GetReference()
 	RemoteCoreActivated = alias_RemoteCoreActivated.GetReference()
 	SoundFX = alias_SoundFX.GetReference()
+
+	BeamLight = alias_BeamLight.GetReference()
+	TargetingLight = alias_TargetingLight.GetReference()
+	TargetRedLight = alias_TargetRedLight.GetReference()
+	TargetGreenLight = alias_TargetGreenLight.GetReference()
 
 	TrackerBeamTargets = New ObjectReference[9]
 	TrackerBeamCasters = New ObjectReference[9]
