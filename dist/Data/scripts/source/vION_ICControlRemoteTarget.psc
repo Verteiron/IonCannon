@@ -33,22 +33,18 @@ ObjectReference _SpawnPoint
 Event OnLoad()
 {Move to Hazard location and tell the IonCannonControl about me.}
 	GotoState("Loaded")
-	SetAngle(0,0,GetAngleZ())
+	;SetAngle(0,0,GetAngleZ())
 	DebugTrace("Placed!")
-	If IonCannonControl.Busy
-		Debug.Notification("Ion Cannon is busy " + IonCannonControl.Status + "!")
-		RegisterForSingleUpdate(1)
-		Return
-	EndIf
-	Int iSafety = 10
-	While !Is3dLoaded() && iSafety
-		iSafety -= 1
-		Wait(0.1)
-	EndWhile
+	
+	; Int iSafety = 10
+	; While !Is3dLoaded() && iSafety
+	; 	iSafety -= 1
+	; 	Wait(0.1)
+	; EndWhile
 
 	Int i = 0
 	While !_SpawnPoint && i < 10
-		_SpawnPoint = FindClosestReferenceOfTypeFromRef(vION_ICTargetHazard,Self,500)
+		_SpawnPoint = FindClosestReferenceOfTypeFromRef(vION_ICTargetHazard,Self,4096)
 		i += 1
 		Wait(0.1)
 	EndWhile
@@ -61,11 +57,12 @@ Event OnLoad()
 	EndIf
 	MoveTo(_SpawnPoint)
 	IonCannonControl.PlaceRemoteTarget(Self)
-
-	RegisterForSingleUpdate(10)
+	RegisterForSingleUpdate(3)
 EndEvent
 
 Event OnUpdate()
+	_SpawnPoint.Disable()
+	_SpawnPoint.Delete()
 	Delete()
 EndEvent
 

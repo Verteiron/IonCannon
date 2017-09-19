@@ -37,8 +37,12 @@ Explosion 			Property vION_AfterglowSparksExplosion 	Auto
 Spell 				Property vION_ICTrackerBeam1Spell	Auto
 Spell 				Property vION_ICFlingActorsSpell	Auto
 Spell 				Property vION_ICBeamBlastSpell		Auto
+Spell 				Property vION_ICRemoteTargetSpell			Auto
+Spell 				Property vION_ICRemoteTargetActivateSpell	Auto
 
 Sound 				Property vION_BlastSM				Auto
+
+ObjectReference 	Property DummyTarget				Auto 
 
 ObjectReference 	Property BeamCore 					Auto Hidden
 ObjectReference 	Property BeamFX 					Auto Hidden
@@ -150,11 +154,12 @@ Function PlaceBeamRings()
 		;If RandomInt(0,4) > 1
 			BeamRings[i].MoveTo(Target,0,0,i * 500 + (RandomFloat(-150,150)))
 			BeamRings[i].SetScale(2.0 - (i * 0.125))
-			BeamRings[i].SetAngle(RandomInt(-5,5),RandomInt(-5,5),RandomInt(0,359))
+			BeamRings[i].SetAngle(RandomInt(-5,5),RandomInt(-5,5),tHeading)
 		;EndIf 
 		i += 1
 	EndWhile
 	BeamRings[0].MoveTo(Target,0,0,100) ; make sure lowest ring can be seen
+	BeamRings[i].SetAngle(RandomInt(-5,5),RandomInt(-5,5),tHeading)
 	DebugTrace("Placed all beam rings!")
 EndFunction
 
@@ -344,6 +349,7 @@ Function FireBeam()
 	BeamFX.EnableNoWait(True)
 
 	BeamCore.MoveTo(Target,0,0,10000)
+	BeamCore.SetAngle(0,0,Target.GetAngleZ())
 	BeamCore.SetScale(4)
 	BeamCore.EnableNoWait()
 	While !BeamCore.Is3dLoaded()
@@ -371,6 +377,13 @@ Function FireBeam()
 	RisingSparks.SetAnimationVariableFloat("fmagicburnamount",0.1)
 	Wait(0.25)
 	BeamFX.DisableNoWait(True)
+	
+	RemoteTargetFrame.MoveToMyEditorLocation()
+	RemoteCoreWaiting.MoveToMyEditorLocation()
+	RemoteCoreActivated.MoveToMyEditorLocation()
+	TargetGreenLight.MoveToMyEditorLocation()
+	TargetRedLight.MoveToMyEditorLocation()
+
 	Wait(1.75)
 	BeamLight.TranslateTo(tX,tY,tZ - 2500,0,0,0,800)
 	TargetGlow.DisableNoWait(True)
@@ -391,14 +404,54 @@ Function FireBeam()
 EndFunction
 
 Function PlaceRemoteTarget(ObjectReference kTarget)
-	kTarget.PlaceAtMe(RemoteTargetFrame)
-	kTarget.PlaceAtMe(RemoteCoreWaiting)
-	kTarget.PlaceAtMe(TargetRedLight)
+	DebugTrace("Placing remote target!")
+	DummyTarget.MoveTo(kTarget)
+	RemoteTargetFrame.MoveTo(kTarget)
+	RemoteCoreWaiting.MoveTo(kTarget)
+	TargetRedLight.MoveTo(kTarget)
 
-
+	Int i = 0
+	While (i < 2)
+		If PlayerREF.GetEquippedSpell(i) == vION_ICRemoteTargetSpell
+			PlayerREF.EquipSpell(vION_ICRemoteTargetActivateSpell, i)
+		EndIf
+		i += 1
+	EndWhile
 EndFunction
 
+Function ActivateRemoteTarget()
+	DebugTrace("Activating remote target!")
+	If Busy
+		TargetGreenLight.MoveToMyEditorLocation()
+		Debug.Notification("Ion Cannon is busy " + Status + "!")
+		Return
+	EndIf
+	TargetGreenLight.MoveTo(RemoteTargetFrame)
+	RemoteCoreActivated.DisableNoWait()
+	RemoteCoreActivated.MoveTo(RemoteTargetFrame)
+	TargetGreenLight.MoveTo(RemoteTargetFrame)
+	TargetRedLight.MoveToMyEditorLocation()
+	RemoteCoreActivated.EnableNoWait(False)
+	RemoteCoreWaiting.MoveToMyEditorLocation()
 
+	SetTarget(DummyTarget)
+	ScanForTarget(300)
+	Wait(0.1)
+	LockOnTarget()
+
+	Int i = 0
+	While (i < 2)
+		If PlayerREF.GetEquippedSpell(i) == vION_ICRemoteTargetActivateSpell
+			PlayerREF.EquipSpell(vION_ICRemoteTargetSpell, i)
+		EndIf
+		i += 1
+	EndWhile
+	PlayerRef.RemoveSpell(vION_ICRemoteTargetActivateSpell)
+	If !PlayerRef.HasSpell(vION_ICRemoteTargetSpell)
+		PlayerRef.AddSpell(vION_ICRemoteTargetSpell, False)
+	EndIf
+
+EndFunction
 
 Function ResetAll()
 	ReadyToFire = False
@@ -418,6 +471,9 @@ Function ResetAll()
 	RemoteTargetFrame.MoveToMyEditorLocation()
 	RemoteCoreWaiting.MoveToMyEditorLocation()
 	RemoteCoreActivated.MoveToMyEditorLocation()
+	TargetGreenLight.MoveToMyEditorLocation()
+	TargetRedLight.MoveToMyEditorLocation()
+	DummyTarget.MoveToMyEditorLocation()
 	SoundFX.MoveToMyEditorLocation()
 	BeamLight.MoveToMyEditorLocation()
 	;TargetingLight.MoveToMyEditorLocation()
