@@ -34,6 +34,8 @@ Explosion 			Property vION_SubBlastExplosion 	Auto
 Explosion 			Property vION_RingBlastExplosion1 	Auto
 Explosion 			Property vION_AfterglowSparksExplosion 	Auto
 
+GlobalVariable 		Property vION_ICTargetPlaced 		Auto
+
 Spell 				Property vION_ICTrackerBeam1Spell	Auto
 Spell 				Property vION_ICFlingActorsSpell	Auto
 Spell 				Property vION_ICBeamBlastSpell		Auto
@@ -101,10 +103,12 @@ Function SetTarget(ObjectReference kTarget)
 		DebugTrace("SetTarget called while busy!",1)
 		Return 
 	EndIf
+	Busy = True
 	If !kTarget.Is3DLoaded() || kTarget.GetDistance(PlayerREF) > 8192
 		ReadyToFire = False
 		DebugTrace("SetTarget: Invalid target: " + kTarget + ". Target must be loaded and within 8192 units of the player!",1)
 		Target = None
+		Busy = False
 		Return
 	EndIf
 	Target = kTarget
@@ -339,9 +343,9 @@ Function FireBeam()
 	Wait(1.2)
 	BeamFX.EnableNoWait(True)
 
-	BeamCore.MoveTo(Target,0,0,8000)
+	BeamCore.MoveTo(Target,0,0,10000)
 	BeamCore.SetAngle(0,0,Target.GetAngleZ())
-	BeamCore.SetScale(4)
+	BeamCore.SetScale(3)
 	BeamCore.EnableNoWait()
 	While !BeamCore.Is3dLoaded()
 		Wait(0.1)
@@ -358,7 +362,6 @@ Function FireBeam()
 			;BeamRings[iCount].PlaceAtMe(vION_RingBlastExplosion1)
 		EndIf
 	EndWhile
-	;Wait(0.25)
 	
 	;Wait(0.25)
 	vION_ICFlingActorsSpell.Cast(Target)
