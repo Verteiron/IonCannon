@@ -23,6 +23,8 @@ String Property ModName = "Orbital Ion Cannon" Auto Hidden
 
 vION_IonCannonControlScript Property vION_IonCannonControl Auto
 
+Formlist Property vION_SpellList Auto
+
 ;=== Config variables ===--
 
 ;=== Variables ===--
@@ -132,6 +134,15 @@ Function DoInit()
 	If !bResult
 		DebugTrace("DoInit: Ion Cannon Control script did not start properly, WTF?")
 	EndIf
+	Int i = 0
+	While i < vION_SpellList.GetSize()
+		If !PlayerREF.HasSpell(vION_SpellList.GetAt(i))
+			PlayerREF.AddSpell(vION_SpellList.GetAt(i) as Spell)
+		EndIf
+		i += 1
+	EndWhile
+
+
 	_Running = True
 	ModVersion = _iCurrentVersion
 EndFunction
