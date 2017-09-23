@@ -25,7 +25,7 @@ ObjectReference	Property vION_TargetSpinner			 		Auto
 ;=== Events ===--
 
 Event OnLoad()
-	DebugTrace("A thing happened!")
+	;DebugTrace("A thing happened!")
 	vION_TargetSpinner.MoveTo(Self)
 	Delete()
 EndEvent

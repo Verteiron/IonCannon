@@ -30,7 +30,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	kTarget = akTarget
 	kCaster = akCaster
 	PushSource = FindClosestReferenceOfAnyTypeInListFromRef(vION_ICTargetList,akTarget,AreaOfEffect * 21.333333)
-	Debug.Trace(self + ": kTarget is " + kTarget + ", kCaster is " + kCaster + ", PushSource is " + PushSource + ".")
+	;Debug.Trace(self + ": kTarget is " + kTarget + ", kCaster is " + kCaster + ", PushSource is " + PushSource + ".")
 	If kTarget == PlayerREF
 		Return
 	EndIf
@@ -45,10 +45,10 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 
 	If fDistance < fRadius
 		Float fPushMag = ((fRadius - fDistance) / fRadius) * PushForce
-		Debug.Trace(self + ": Blast Radius is " + fRadius + ". Distance to target" + kTarget + " is " + fDistance + ". Applying PushMag " + fPushMag + ".")
+		;Debug.Trace(self + ": Blast Radius is " + fRadius + ". Distance to target" + kTarget + " is " + fDistance + ". Applying PushMag " + fPushMag + ".")
 		PushSource.PushActorAway(kTarget, fPushMag)
 	Else
-		Debug.Trace(self + ": Blast Radius is " + fRadius + ". Distance to target" + kTarget + " is " + fDistance + ". No force applied.")
+		;Debug.Trace(self + ": Blast Radius is " + fRadius + ". Distance to target" + kTarget + " is " + fDistance + ". No force applied.")
 	EndIf
 EndEvent
 

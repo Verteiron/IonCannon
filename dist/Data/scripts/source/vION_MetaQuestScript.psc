@@ -66,9 +66,7 @@ EndEvent
 
 Event OnGameReload()
 	DebugTrace("Metaquest event: OnGameReload")
-	;If vFFC_CFG_Shutdown.GetValue() != 0
-		DoUpkeep(False)
-	;EndIf
+	DoUpkeep(False)
 EndEvent
 
 Event OnShutdown(string eventName, string strArg, float numArg, Form sender)

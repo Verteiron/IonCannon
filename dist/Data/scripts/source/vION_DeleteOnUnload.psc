@@ -29,14 +29,14 @@ Event OnLoad()
 EndEvent
 
 Event OnUpdate()
-	DebugTrace("Deleting because timer expired!")
+	DebugTrace("Deleting: timer expired!")
 	Disable()
 	Delete()
 EndEvent
 
 Event OnCellDetach()
 	UnregisterForUpdate()
-	DebugTrace("Deleting because cell detached!")
+	DebugTrace("Deleting: cell detached!")
 	Delete()
 EndEvent
 

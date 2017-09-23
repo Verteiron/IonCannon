@@ -80,7 +80,7 @@ Event OnLoad()
 	_frameMesh = _SpawnPoint.PlaceAtMe(vION_ICRemoteTargetActivator)
 	MoveTo(_SpawnPoint)
 	_redLight = PlaceAtMe(vION_TargetRedLight)
-	DebugTrace("Moved to " + _SpawnPoint)
+	;DebugTrace("Moved to " + _SpawnPoint)
 
 	i = 0
 	While (i < 2)

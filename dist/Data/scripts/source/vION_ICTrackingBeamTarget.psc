@@ -111,7 +111,7 @@ Function UpdateCasterDistance()
 	pCastX = kCaster.GetPositionX()
 	pCastY = kCaster.GetPositionY()
 	fDistance = Math.SqRt(((pCastX - pX) * (pCastX - pX)) + ((pCastY - pY) * (pCastY - pY)))
-	DebugTrace("Caster distance is " + fDistance)
+	;DebugTrace("Caster distance is " + fDistance)
 EndFunction
 
 Function startFiring()
@@ -119,7 +119,7 @@ Function startFiring()
 	DebugTrace("startFiring!")
 
 	;Start casting
-	DebugTrace("Casting!")
+	;DebugTrace("Casting!")
 	isCasting = true
 	vION_ICTrackerBeam1Spell.RemoteCast(kCaster,PlayerRef,Self)
 	UpdateCasterDistance()
@@ -129,7 +129,7 @@ EndFunction
 
 Function randomMove()
 	UpdateCasterDistance()
-	DebugTrace("Distance to target is " + fDistance)
+	;DebugTrace("Distance to target is " + fDistance)
 	pCastX = pX + RandomFloat(-fDistance,fDistance)
 	pCastY = pY + RandomFloat(-fDistance,fDistance)
 	;DebugTrace("Translating to " + pCastX + "," + pCastY)
@@ -191,7 +191,7 @@ State Shutdown
 	EndEvent
 
 	Event OnUpdate()
-		DebugTrace("Translating to final position...")
+		;DebugTrace("Translating to final position...")
 		kCaster.TranslateTo(parentTarget.GetPositionX(), parentTarget.GetPositionY(), parentTarget.GetPositionZ() + casterHeight,0,0,0,100)
 	EndEvent
 
@@ -204,10 +204,10 @@ State Shutdown
 			kCaster.StopTranslation()
 		EndIf
 		kCaster.InterruptCast()
-		DebugTrace("Deleting the caster! :(")
+		;DebugTrace("Deleting the caster! :(")
 		kCaster.Delete()
 		parentTarget = None
-		DebugTrace("Deleting myself! :(")
+		;DebugTrace("Deleting myself! :(")
 		Delete()
 	EndEvent
 

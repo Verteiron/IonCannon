@@ -41,27 +41,6 @@ ObjectReference _TargetPoint
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	DebugTrace("Activating remote target!")
 	IonCannonControl.ActivateRemoteTarget()
-	; _TargetPoint = FindClosestReferenceOfTypeFromRef(vION_ICTargetSpinnerActivator,akCaster,8192)
-	; If _TargetPoint
-	; 	DebugTrace("Activating " + _TargetPoint)
-	; 	(_TargetPoint as vION_ICBeamRemoteTarget).GoSplodey()
-	; Else
-	; 	DebugTrace("Targetpoint not found! That's bad...")
-	; 	If (vION_ICTargetPlaced.GetValue())
-	; 		vION_ICTargetPlaced.SetValue(0)
-	; 		Int i = 0
-	; 		While (i < 2)
-	; 			If PlayerREF.GetEquippedSpell(i) == vION_ICRemoteTargetActivateSpell
-	; 				PlayerREF.EquipSpell(vION_ICRemoteTargetSpell, i)
-	; 			EndIf
-	; 			i += 1
-	; 		EndWhile
-	; 		PlayerRef.RemoveSpell(vION_ICRemoteTargetActivateSpell)
-	; 		If !PlayerRef.HasSpell(vION_ICRemoteTargetSpell)
-	; 			PlayerRef.AddSpell(vION_ICRemoteTargetSpell, False)
-	; 		EndIf
-	; 	EndIf
-	; EndIf
 EndEvent
 
 

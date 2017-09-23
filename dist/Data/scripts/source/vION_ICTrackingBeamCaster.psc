@@ -66,7 +66,7 @@ Event OnUpdate()
 EndEvent
 
 Function StartScanning(Float fMaxRange)
-	DebugTrace("Starting scan!")
+	;DebugTrace("Starting scan!")
 	LockingOn = False
 	LockedOn = False
 	MaxRange = fMaxRange
@@ -83,7 +83,7 @@ Function StartSweep()
 EndFunction
 
 Function StartLockOn()
-	DebugTrace("Locking on!")
+	;DebugTrace("Locking on!")
 	LockingOn = True
 	UpdateTargetDistance()
 	SplineTranslateTo(TargetX, TargetY, IonCannonControl.tZ + 2000, 0, 0, (360 / 9 * indexNumber) - 90, RandomFloat(-1,1) * Speed / 2, Speed)

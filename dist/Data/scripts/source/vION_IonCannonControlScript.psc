@@ -200,12 +200,12 @@ Function ScanForTarget(Float fMaxRange)
 			fAngle -= 360
 		EndIf
 	
-		DebugTrace("Angle is " + fAngle)
+		;DebugTrace("Angle is " + fAngle)
 
 		MultX[iCount] = Math.Cos(fAngle)
 		MultY[iCount] = -Math.Sin(fAngle)
 		
-		DebugTrace("Placing tracking beam caster " + iCount + " at x:" + (tX + (MultX[iCount] * fMaxRange)) + ",y:" + (tY + (MultY[iCount] * fMaxRange)) + "!")
+		;DebugTrace("Placing tracking beam caster " + iCount + " at x:" + (tX + (MultX[iCount] * fMaxRange)) + ",y:" + (tY + (MultY[iCount] * fMaxRange)) + "!")
 		(TrackerBeamCasters[iCount] as vION_ICTrackingBeamCaster).IndexNumber = iCount
 		TrackerBeamCasters[iCount].MoveTo(Target,(MultX[iCount] * fMaxRange) + RandomFloat(-fMaxRange/2,fMaxRange/2), (MultY[iCount] * fMaxRange) + RandomFloat(-fMaxRange/2,fMaxRange/2), 2000)
 		TrackerBeamTargets[iCount].MoveTo(TrackerBeamCasters[iCount],0,0,-1800)
@@ -279,7 +279,7 @@ Event TrackerBeamCasterLockedOn(vION_ICTrackingBeamCaster kCaster)
 	; 	Return
 	; EndIf
 	LockCount += 1
-	DebugTrace("Tracking beam " + kCaster.IndexNumber + " reports locked on! (" + LockCount + "/" + TrackerBeamCasters.Length + ")")
+	;DebugTrace("Tracking beam " + kCaster.IndexNumber + " reports locked on! (" + LockCount + "/" + TrackerBeamCasters.Length + ")")
 	If LockCount > 6
 		RisingSparks.SetAnimationVariableFloat("fmagicburnamount",1.0)
 	EndIf
@@ -380,7 +380,7 @@ Function FireBeam()
 	TargetGreenLight.MoveToMyEditorLocation()
 	TargetRedLight.MoveToMyEditorLocation()
 	Status = "Recharging"
-	
+
 	Wait(1.75)
 	BeamLight.TranslateTo(tX,tY,tZ - 2500,0,0,0,800)
 	TargetGlow.DisableNoWait(True)
@@ -502,44 +502,32 @@ Function ResetAll()
 	DebugTrace("Resetting complete. Ready to fire!")
 EndFunction
 
-
-
-
-
-
-
-
-
-
-
-
-
 Function ListRefs()
-	DebugTrace("alias_BeamCore:     " + alias_BeamCore + " - " + alias_BeamCore.GetReference())
-	DebugTrace("alias_BeamFX:     " + alias_BeamFX + " - " + alias_BeamFX.GetReference())
-	DebugTrace("alias_RisingSparks: " + alias_RisingSparks + " - " + alias_RisingSparks.GetReference())
-	DebugTrace("alias_RemoteTargetFrame: " + alias_RemoteTargetFrame + " - " + alias_RemoteTargetFrame.GetReference())
-	DebugTrace("alias_RemoteCoreWaiting: " + alias_RemoteCoreWaiting + " - " + alias_RemoteCoreWaiting.GetReference())
-	DebugTrace("alias_RemoteCoreActivated: " + alias_RemoteCoreActivated + " - " + alias_RemoteCoreActivated.GetReference())
-	DebugTrace("alias_TargetGlow: " + alias_TargetGlow + " - " + alias_TargetGlow.GetReference())
-	DebugTrace("alias_SoundFX: " + alias_SoundFX + " - " + alias_SoundFX.GetReference())
+	; DebugTrace("alias_BeamCore:     " + alias_BeamCore + " - " + alias_BeamCore.GetReference())
+	; DebugTrace("alias_BeamFX:     " + alias_BeamFX + " - " + alias_BeamFX.GetReference())
+	; DebugTrace("alias_RisingSparks: " + alias_RisingSparks + " - " + alias_RisingSparks.GetReference())
+	; DebugTrace("alias_RemoteTargetFrame: " + alias_RemoteTargetFrame + " - " + alias_RemoteTargetFrame.GetReference())
+	; DebugTrace("alias_RemoteCoreWaiting: " + alias_RemoteCoreWaiting + " - " + alias_RemoteCoreWaiting.GetReference())
+	; DebugTrace("alias_RemoteCoreActivated: " + alias_RemoteCoreActivated + " - " + alias_RemoteCoreActivated.GetReference())
+	; DebugTrace("alias_TargetGlow: " + alias_TargetGlow + " - " + alias_TargetGlow.GetReference())
+	; DebugTrace("alias_SoundFX: " + alias_SoundFX + " - " + alias_SoundFX.GetReference())
 
 
-	Int i = 0	
-	While i < alias_TrackerBeamTargets.Length
-		DebugTrace("alias_TrackerBeamTargets[" + i + "]: " + alias_TrackerBeamTargets[i] + " - " + alias_TrackerBeamTargets[i].GetReference())
-		i += 1
-	EndWhile
-	i = 0
-	While i < alias_TrackerBeamCasters.Length
-		DebugTrace("alias_TrackerBeamCasters[" + i + "]: " + alias_TrackerBeamCasters[i] + " - " + alias_TrackerBeamCasters[i].GetReference())
-		i += 1
-	EndWhile
-	i = 0
-	While i < alias_BeamRings.Length
-		DebugTrace("alias_BeamRings[" + i + "]: " + alias_BeamRings[i] + " - " + alias_BeamRings[i].GetReference())
-		i += 1
-	EndWhile
+	; Int i = 0	
+	; While i < alias_TrackerBeamTargets.Length
+	; 	DebugTrace("alias_TrackerBeamTargets[" + i + "]: " + alias_TrackerBeamTargets[i] + " - " + alias_TrackerBeamTargets[i].GetReference())
+	; 	i += 1
+	; EndWhile
+	; i = 0
+	; While i < alias_TrackerBeamCasters.Length
+	; 	DebugTrace("alias_TrackerBeamCasters[" + i + "]: " + alias_TrackerBeamCasters[i] + " - " + alias_TrackerBeamCasters[i].GetReference())
+	; 	i += 1
+	; EndWhile
+	; i = 0
+	; While i < alias_BeamRings.Length
+	; 	DebugTrace("alias_BeamRings[" + i + "]: " + alias_BeamRings[i] + " - " + alias_BeamRings[i].GetReference())
+	; 	i += 1
+	; EndWhile
 
 EndFunction
 
