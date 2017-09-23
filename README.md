@@ -44,7 +44,8 @@ A. Originally this effect worked by dynamically creating and deleting objects. U
 
 ## Credits
 
-Credits to Blast Lord on Steam for the original request.
+Thanks to Blast Lord on Steam for the original request.
 
 Many thanks to [cubicApocalypse](http://freesound.org/people/cubicApocalypse/) on freesound.org for the following audio:
-[x_explosion.wav](http://freesound.org/people/cubicApocalypse/sounds/256658/) - modified slightly to remove the double explosion. Original sound is copyrighted by [cubicApocalypse](http://freesound.org/people/cubicApocalypse/) and is licensed under CC BY 3.0.
+
+* [x_explosion.wav](http://freesound.org/people/cubicApocalypse/sounds/256658/) - modified slightly to remove the double explosion. Original sound is copyrighted by [cubicApocalypse](http://freesound.org/people/cubicApocalypse/) and is licensed under CC BY 3.0.
