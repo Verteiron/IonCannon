@@ -118,8 +118,8 @@ Function SetTarget(ObjectReference kTarget)
 	tHeading = Target.GetAngleZ()
 	DebugTrace("Target is now " + Target + ". Position x:" + tX +", y:" + tY + ", z:" + tZ + ", Heading:" + tHeading)
 
-	;RegisterForSingleUpdate(0)
-	PlaceBeamRings()
+	RegisterForSingleUpdate(0)
+	;PlaceBeamRings()
 	
 	RisingSparks.MoveTo(Target,0,0,192)
 	RisingSparks.SetAngle(0,0,tHeading)
@@ -345,7 +345,7 @@ Function FireBeam()
 
 	BeamCore.MoveTo(Target,0,0,10000)
 	BeamCore.SetAngle(0,0,Target.GetAngleZ())
-	BeamCore.SetScale(3)
+	;BeamCore.SetScale(3)
 	BeamCore.EnableNoWait()
 	While !BeamCore.Is3dLoaded()
 		Wait(0.1)
@@ -384,6 +384,11 @@ Function FireBeam()
 	BeamLight.TranslateTo(tX,tY,tZ - 2500,0,0,0,800)
 	TargetGlow.DisableNoWait(True)
 	Wait(1)
+	iCount = 0
+	While iCount < BeamRings.Length
+		BeamRings[iCount].MoveToMyEditorLocation()
+		iCount += 1
+	EndWhile
 	RisingSparks.SetAnimationVariableFloat("fmagicburnamount",0.0)
 	Wait(2)
 	BeamLight.StopTranslation()

@@ -47,11 +47,11 @@ Event OnLoad()
 		RegisterForSingleUpdate(1)
 		Return
 	EndIf
-	Int iSafety = 10
-	While !Is3dLoaded() && iSafety
-		iSafety -= 1
-		Wait(0.1)
-	EndWhile
+	; Int iSafety = 10
+	; While !Is3dLoaded() && iSafety
+	; 	iSafety -= 1
+	; 	Wait(0.1)
+	; EndWhile
 	Wait(0.5)
 	IonCannonControl.SetTarget(Self)
 	If !IonCannonControl.ReadyToFire
