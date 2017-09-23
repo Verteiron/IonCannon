@@ -85,8 +85,8 @@ Function DoUpkeep(Bool DelayedStart = True)
 	_iUpkeepsCompleted = 0
 	;FIXME: CHANGE THIS WHEN UPDATING!
 	ModVersionMajor = 0
-	ModVersionMinor = 0
-	ModVersionPatch = 6
+	ModVersionMinor = 9
+	ModVersionPatch = 0
 	If !CheckDependencies()
 		AbortStartup()
 		Return

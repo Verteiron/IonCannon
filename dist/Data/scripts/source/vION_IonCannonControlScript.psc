@@ -379,7 +379,8 @@ Function FireBeam()
 	RemoteCoreActivated.MoveToMyEditorLocation()
 	TargetGreenLight.MoveToMyEditorLocation()
 	TargetRedLight.MoveToMyEditorLocation()
-
+	Status = "Recharging"
+	
 	Wait(1.75)
 	BeamLight.TranslateTo(tX,tY,tZ - 2500,0,0,0,800)
 	TargetGlow.DisableNoWait(True)
@@ -459,7 +460,7 @@ EndFunction
 Function ResetAll()
 	ReadyToFire = False
 	Busy = True
-	Status = "Resetting"
+	Status = "Recharging"
 
 	DebugTrace("Resetting all objects for next shot...")
 	UnregisterForUpdate()
