@@ -12,6 +12,8 @@ Actor Property PlayerRef Auto
 
 Bool Property Ready = False Auto
 
+GlobalVariable Property vION_Reset Auto
+
 Float Property ModVersion Auto Hidden
 Int Property ModVersionInt Auto Hidden
 
@@ -121,6 +123,12 @@ Function DoUpkeep(Bool DelayedStart = True)
 		;FIXME: Do init stuff in other quests
 		DebugTrace("Loaded, no updates.")
 	EndIf
+
+	If vION_Reset.GetValue()
+		vION_Reset.SetValue(0)
+		ResetEverything()
+	EndIF
+
 	CheckForExtras()
 	UpdateConfig()
 	DebugTrace("Upkeep complete!")
@@ -167,6 +175,25 @@ Function DoUpgrade()
 	EndIf
 	_Running = True
 	DebugTrace("Upgrade complete!")
+EndFunction
+
+Function ResetEverything()
+	vION_IonCannonControl.Stop()
+	WaitMenuMode(0.25)
+	Bool bResult = vION_IonCannonControl.Start()
+	If !bResult
+		DebugTrace("DoInit: Ion Cannon Control script did not start properly, WTF?")
+	EndIf
+	;Re-add player spells too, just in case
+	Int i = 0
+	While i < vION_SpellList.GetSize()
+		If !PlayerREF.HasSpell(vION_SpellList.GetAt(i))
+			PlayerREF.AddSpell(vION_SpellList.GetAt(i) as Spell)
+		EndIf
+		i += 1
+	EndWhile
+	vION_IonCannonControl.ResetAll()
+	Debug.Notification("Ion Cannon scripts and objects were reset!")
 EndFunction
 
 Function CheckCompatibilityModules(Bool abReset = False)
